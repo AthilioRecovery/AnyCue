@@ -4,167 +4,77 @@
 
 # AnyCue
 
-**An open-source, fully configurable soundboard for Windows. Play sounds through your speakers, your microphone, or both.**
+**Your sounds, whenever you want.**
 
+Open-source soundboard for Windows 10/11. Built with Rust, Svelte 5 and Tauri 2.
+
+[![Windows CI](https://github.com/AthilioRecovery/AnyCue/actions/workflows/windows-build.yml/badge.svg)](https://github.com/AthilioRecovery/AnyCue/actions/workflows/windows-build.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/AthilioRecovery/AnyCue?include_prereleases)](https://github.com/AthilioRecovery/AnyCue/releases)
-![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey)
+![Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey)
 
-[English](README.md) · [Português](README.pt-BR.md)
+[English](README.md) · [Português](README.pt-BR.md) · [Windows setup](WINDOWS.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
-> **Status: early development.** The architecture and feature set below are the project's design and roadmap. Items are checked off only when they ship. See [Roadmap](#roadmap).
+> **Alpha v0.1.1:** A genuine Windows desktop application, not a browser website. Compiled Windows binaries are produced in GitHub Actions. Advanced features listed in the roadmap are **not shipped yet**.
 
-<div align="center">
-<img src="assets/preview-hotbar.svg" alt="AnyCue concept preview: hotbar with sound pads" width="860">
-<br><sub>Concept preview. Real screenshots will replace it as the UI ships.</sub>
-</div>
+## Download for Windows
 
----
+1. Open [Build AnyCue for Windows](https://github.com/AthilioRecovery/AnyCue/actions/workflows/windows-build.yml).
+2. Open the latest **successful** run and download **AnyCue-Windows-x64** under Artifacts.
+3. Unzip and run `AnyCue.exe` (portable) or the `AnyCue_0.1.1_x64-setup.exe` installer.
 
-## Why this exists
+A virtual audio cable such as VB-CABLE (installed separately) is necessary to route audio into Discord or games. Windows 10 may require the Microsoft WebView2 Runtime. See [WINDOWS.md](WINDOWS.md).
 
-- **Open.** MIT-licensed, readable code, no lock-in.
-- **Configurable.** Choose your real microphone, your virtual mic output and your speakers. Every behavior has a setting.
-- **Private.** No telemetry and no network calls by default.
-- **Scriptable.** The UI is just a client of the same local API that your scripts, Stream Deck and bots can use.
+**Tauri bundles the interface inside the executable.** Development mode runs Vite on localhost; the production executable needs no HTTP server or IP.
 
-## Features
+## What works today
 
-| Area | What you get |
+| Feature | Status |
 |---|---|
-| **Audio routing** | Pick input mic, virtual mic output and speakers independently; per-sound destination (speakers, mic, both); separate volume controls |
-| **Sound quality** | Loudness normalization (LUFS), limiter, optional block-voice, noise gate, ducking, configurable mic delay |
-| **Library** | Drag and drop, categories, tags, search, favorites, colors and icons, waveform view, paginated hotbar |
-| **Formats** | mp3, wav, ogg, flac, opus, m4a, aac |
-| **Hotkeys** | Global shortcuts that work in-game, left/right modifiers, numpad, mouse buttons, conflict detection |
-| **Auto Keys** | Holds your push-to-talk key while a sound plays, with per-app profiles |
-| **Recorder and editor** | Record mic and/or speakers, trim, fade, gain, unlimited undo, non-destructive export |
-| **Text to speech** | Uses voices installed on Windows |
-| **Automation** | JSON-RPC 2.0 over named pipe and optional localhost WebSocket, CLI, Python and TypeScript SDKs |
-| **Profiles** | Switch whole setups (Discord, Stream, Game) with a hotkey; settings live in a readable `config.toml` |
+| Windows desktop interface using the compact dark theme | Implemented |
+| Import MP3, WAV, FLAC, OGG, Opus, AAC, M4A | Implemented through Symphonia (codec support may vary) |
+| Local sound library, categories, search, favorites and edits | Implemented |
+| Select real microphone, speaker output and virtual playback output | Implemented |
+| Play sounds to speakers, virtual output or both | Implemented |
+| Experimental mic capture into the virtual output mix | Implemented, requires device testing |
+| Per-sound/master volume, stop, approximate output meter | Implemented |
+| Keyboard keys 1–9 and Escape | Works only when the window is focused |
+| Global hotkeys, automated PTT, LUFS, recording, TTS, waveform editor | Planned; not implemented |
+| Named-pipe API, WebSocket, SDKs and service daemon | Planned; not implemented |
 
-## Previews
+The initial UI was adapted from the user-supplied compact dark frontend. The concept artwork below is still concept art, **not a screenshot** of the released interface.
 
-<sub>Concept previews of the planned interface, not final screenshots.</sub>
+<div align="center"><img src="assets/preview-hotbar.svg" alt="Earlier AnyCue concept art" width="760"></div>
 
-<p align="center">
-  <img src="assets/preview-routing.svg" alt="AnyCue concept preview: audio routing and mixer" width="48%">
-  <img src="assets/preview-settings.svg" alt="AnyCue concept preview: settings" width="48%">
-</p>
+## Architecture
 
-## How sound reaches your microphone
+- `apps/desktop/`: Svelte 5/TypeScript UI and Tauri 2 Windows window
+- `crates/core/`: testable DSP primitives
+- `crates/audio-io/`: CPAL/WASAPI audio streams and Symphonia decoder
+- `crates/library/`: versioned JSON audio library
+- `crates/cli/`: device diagnosis and basic playback
+- `.github/workflows/`: Windows tests and executable/installer build
 
-v1 uses an internal mixer and a **virtual audio cable** (for example VB-Cable or VoiceMeeter), so no custom driver is needed.
-
-```mermaid
-flowchart LR
-    MIC[Real microphone] --> MIX[Mixer<br/>gain, gate, block voice]
-    LIB[Sound library<br/>decoder + normalizer] --> MIX
-    LIB --> SPK[Speakers]
-    MIX --> LIM[Limiter]
-    LIM --> VIRT[Virtual cable output]
-    VIRT --> APPS[Discord, OBS, games, Zoom]
-    HK[Hotkeys / API / CLI / UI] --> LIB
-```
-
-A custom virtual driver (C++) that removes the need for a cable is planned as an RFC for v2.
-
-## Install
-
-No release yet. When v0.1.0 ships:
-
-1. Download the installer (`.msi`) or the portable `.zip` from [Releases](https://github.com/AthilioRecovery/AnyCue/releases) and verify the SHA-256 checksum.
-2. Install a virtual audio cable (the app will guide you if none is found).
-3. Open the app, choose your microphone and the virtual output, and set your communication app's input to the virtual cable.
-
-## Usage (planned interface)
-
-```bash
-anycue play "airhorn"
-anycue volume 80
-anycue doctor
-```
-
-```python
-# Python SDK (planned)
-from anycue import Client
-
-with Client() as app:
-    app.play("airhorn", destination="mic")
-```
-
-The API is defined once in [`schema/`](schema/) and the SDKs are generated from it. Full reference in [`docs/api.md`](docs/api.md).
-
-## Tech stack
-
-| Layer | Technology |
-|---|---|
-| Audio engine, mixer, DSP, hotkeys, daemon, API | Rust |
-| Desktop UI | TypeScript, Svelte 5, Tauri 2 |
-| SDKs | Python, TypeScript |
-| Build and release | GitHub Actions, PowerShell |
-| Planned (v2) | C++ virtual audio driver |
-
-Design decisions are recorded in [`docs/adr/`](docs/adr/). The real-time audio rules (no allocations, no blocking locks on the audio thread) are in [`docs/realtime-audio.md`](docs/realtime-audio.md).
-
-## Repository layout
-
-```
-crates/   Rust crates: core, audio-io, hotkeys, library, tts, recorder, api, daemon, cli
-apps/     desktop UI (Tauri + Svelte)
-sdk/      Python and TypeScript clients
-schema/   API schema (single source of truth)
-docs/     documentation, ADRs, RFCs
-examples/ Stream Deck, Discord bot, OBS widget
-```
+CPAL streams remain on a dedicated worker thread; Tauri commands communicate by channel. Audio and library data stay local. No telemetry is implemented.
 
 ## Build from source
 
-```bash
+Install **Windows 10/11**, Node.js 22, Rust stable MSVC, Visual Studio C++ Build Tools and WebView2, then:
+
+```powershell
 git clone https://github.com/AthilioRecovery/AnyCue.git
 cd AnyCue
-cargo build --workspace
-cargo test --workspace
-cd apps/desktop && npm install && npm run tauri dev
+.\ABRIR-DESKTOP.bat
+# Or: .\COMPILAR-WINDOWS.bat
 ```
 
-Requires Windows 10/11, Rust (stable), Node.js 20+.
+The installer and standalone exe are created in `target/release/` after a successful Windows build. See [WINDOWS.md](WINDOWS.md).
 
-## Roadmap
+## Roadmap and contributing
 
-- [ ] **M0** Foundation: monorepo, CI, license, docs skeleton
-- [ ] **M1** Device listing and playback to a chosen output
-- [ ] **M2** Mixer and virtual mic routing, latency measurement
-- [ ] **M3** Library, hotbar, waveform, original UI theme
-- [ ] **M4** Global hotkeys and Auto Keys
-- [ ] **M5** LUFS normalization, block voice, delay, ducking, gate
-- [ ] **M6** Recorder, editor, text to speech
-- [ ] **M7** Local API, CLI, SDKs, examples
-- [ ] **M8** Settings, profiles, i18n, diagnostics, accessibility
-- [ ] **M9** v0.1.0 release
-- [ ] **v2** Custom virtual audio driver (RFC)
-
-## Contributing
-
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Look for issues labeled `good first issue`. Use [Conventional Commits](https://www.conventionalcommits.org/).
-
-Report security problems privately by email to [eu@athiliodev.com.br](mailto:eu@athiliodev.com.br), as described in [SECURITY.md](SECURITY.md).
-
-## FAQ
-
-**Does it need a driver?** Not in v1. It outputs to a virtual cable you install separately.
-
-**Does it collect data?** No. There is no telemetry and no network access by default.
-
-**Is it based on another soundboard?** No. It is an independent, clean-room project that implements the general idea of a soundboard with its own code, protocol, file format and design.
-
-## Contact
-
-- Email: [eu@athiliodev.com.br](mailto:eu@athiliodev.com.br)
-- Issues and ideas: [github.com/AthilioRecovery/AnyCue/issues](https://github.com/AthilioRecovery/AnyCue/issues)
+See [ROADMAP](docs/ROADMAP.md), [CONTRIBUTING](CONTRIBUTING.md), [SECURITY](SECURITY.md) and [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md). For issues, use [GitHub Issues](https://github.com/AthilioRecovery/AnyCue/issues).
 
 ## License
 
-[MIT](LICENSE). Third-party dependencies and their licenses are listed in [THIRD_PARTY.md](THIRD_PARTY.md).
+MIT. See [LICENSE](LICENSE) and [THIRD_PARTY.md](THIRD_PARTY.md).

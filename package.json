@@ -1,0 +1,16 @@
+{
+  "name": "anycue-monorepo",
+  "private": true,
+  "version": "0.1.1",
+  "description": "AnyCue - privacy-first open source soundboard",
+  "type": "module",
+  "scripts": {
+    "desktop:dev": "npm --prefix apps/desktop run tauri dev",
+    "desktop:build": "npm --prefix apps/desktop run tauri build",
+    "desktop:install": "npm --prefix apps/desktop install"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,17 @@
+/target/
+**/node_modules/
+**/dist/
+**/.svelte-kit/
+**/src-tauri/gen/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+*.mp3
+*.wav
+*.flac
+*.ogg
+*.opus
+*.m4a
+*.aac

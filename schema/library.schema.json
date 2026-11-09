@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://example.invalid/anycue/library.schema.json",
+  "title":"AnyCue native library v1",
+  "type":"object","additionalProperties":false,"required":["version","categories","sounds"],
+  "properties":{"version":{"const":1},"categories":{"type":"array","items":{"type":"string"}},"sounds":{"type":"array","items":{"$ref":"#/$defs/sound"}}},
+  "$defs":{"sound":{"type":"object","required":["id","title","path","category","color","favorite","volume","destination"],"properties":{"id":{"type":"string"},"title":{"type":"string"},"path":{"type":"string"},"category":{"type":"string"},"color":{"type":"string"},"favorite":{"type":"boolean"},"volume":{"type":"number","minimum":0,"maximum":200},"destination":{"enum":["monitor","virtual","both"]}}}}
+}
