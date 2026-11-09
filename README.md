@@ -1,15 +1,14 @@
 <div align="center">
 
-<!-- TODO: replace with your own banner (assets/banner.svg) -->
-<img src="assets/banner.svg" alt="PROJECT_NAME" width="720">
+<img src="assets/banner.svg" alt="AnyCue" width="720">
 
-# PROJECT_NAME
+# AnyCue
 
 **An open-source, fully configurable soundboard for Windows. Play sounds through your speakers, your microphone, or both.**
 
-[![CI](https://github.com/ORG/PROJECT_NAME/actions/workflows/ci.yml/badge.svg)](https://github.com/ORG/PROJECT_NAME/actions)
+[![CI](https://github.com/AthilioRecovery/AnyCue/actions/workflows/ci.yml/badge.svg)](https://github.com/AthilioRecovery/AnyCue/actions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/ORG/PROJECT_NAME?include_prereleases)](https://github.com/ORG/PROJECT_NAME/releases)
+[![Release](https://img.shields.io/github/v/release/AthilioRecovery/AnyCue?include_prereleases)](https://github.com/AthilioRecovery/AnyCue/releases)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey)
 
 [English](README.md) · [Português](README.pt-BR.md)
@@ -18,7 +17,10 @@
 
 > **Status: early development.** The architecture and feature set below are the project's design and roadmap. Items are checked off only when they ship. See [Roadmap](#roadmap).
 
-<!-- TODO: add a short GIF (<= 10 s) of the UI once M3 is done -->
+<div align="center">
+<img src="assets/preview-hotbar.svg" alt="AnyCue concept preview: hotbar with sound pads" width="860">
+<br><sub>Concept preview. Real screenshots will replace it as the UI ships.</sub>
+</div>
 
 ---
 
@@ -44,6 +46,15 @@
 | **Automation** | JSON-RPC 2.0 over named pipe and optional localhost WebSocket, CLI, Python and TypeScript SDKs |
 | **Profiles** | Switch whole setups (Discord, Stream, Game) with a hotkey; settings live in a readable `config.toml` |
 
+## Previews
+
+<sub>Concept previews of the planned interface, not final screenshots.</sub>
+
+<p align="center">
+  <img src="assets/preview-routing.svg" alt="AnyCue concept preview: audio routing and mixer" width="48%">
+  <img src="assets/preview-settings.svg" alt="AnyCue concept preview: settings" width="48%">
+</p>
+
 ## How sound reaches your microphone
 
 v1 uses an internal mixer and a **virtual audio cable** (for example VB-Cable or VoiceMeeter), so no custom driver is needed.
@@ -65,21 +76,21 @@ A custom virtual driver (C++) that removes the need for a cable is planned as an
 
 No release yet. When v0.1.0 ships:
 
-1. Download the installer (`.msi`) or the portable `.zip` from [Releases](https://github.com/ORG/PROJECT_NAME/releases) and verify the SHA-256 checksum.
+1. Download the installer (`.msi`) or the portable `.zip` from [Releases](https://github.com/AthilioRecovery/AnyCue/releases) and verify the SHA-256 checksum.
 2. Install a virtual audio cable (the app will guide you if none is found).
 3. Open the app, choose your microphone and the virtual output, and set your communication app's input to the virtual cable.
 
 ## Usage (planned interface)
 
 ```bash
-PROJECT_NAME play "airhorn"
-PROJECT_NAME volume 80
-PROJECT_NAME doctor
+anycue play "airhorn"
+anycue volume 80
+anycue doctor
 ```
 
 ```python
 # Python SDK (planned)
-from PROJECT_NAME import Client
+from anycue import Client
 
 with Client() as app:
     app.play("airhorn", destination="mic")
@@ -113,8 +124,8 @@ examples/ Stream Deck, Discord bot, OBS widget
 ## Build from source
 
 ```bash
-git clone https://github.com/ORG/PROJECT_NAME.git
-cd PROJECT_NAME
+git clone https://github.com/AthilioRecovery/AnyCue.git
+cd AnyCue
 cargo build --workspace
 cargo test --workspace
 cd apps/desktop && npm install && npm run tauri dev
@@ -140,7 +151,7 @@ Requires Windows 10/11, Rust (stable), Node.js 20+.
 
 Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Look for issues labeled `good first issue`. Use [Conventional Commits](https://www.conventionalcommits.org/).
 
-Report security problems privately, as described in [SECURITY.md](SECURITY.md).
+Report security problems privately by email to [eu@athiliodev.com.br](mailto:eu@athiliodev.com.br), as described in [SECURITY.md](SECURITY.md).
 
 ## FAQ
 
@@ -149,6 +160,11 @@ Report security problems privately, as described in [SECURITY.md](SECURITY.md).
 **Does it collect data?** No. There is no telemetry and no network access by default.
 
 **Is it based on another soundboard?** No. It is an independent, clean-room project that implements the general idea of a soundboard with its own code, protocol, file format and design.
+
+## Contact
+
+- Email: [eu@athiliodev.com.br](mailto:eu@athiliodev.com.br)
+- Issues and ideas: [github.com/AthilioRecovery/AnyCue/issues](https://github.com/AthilioRecovery/AnyCue/issues)
 
 ## License
 

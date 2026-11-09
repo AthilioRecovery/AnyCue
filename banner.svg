@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 400" width="1440" height="400" role="img" aria-label="AnyCue banner">
+  <defs>
+    <radialGradient id="glow" cx="85%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="#FFB020" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFB020" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="10%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#3DD6C6" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#3DD6C6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1440" height="400" rx="24" fill="#0D0E12"/>
+  <rect width="1440" height="400" rx="24" fill="url(#glow)"/>
+  <rect width="1440" height="400" rx="24" fill="url(#glow2)"/>
+  <rect x="1" y="1" width="1438" height="398" rx="23" fill="none" stroke="#262A34" stroke-width="2"/>
+
+  <g transform="translate(80,92) scale(0.8)">
+    <rect width="256" height="256" rx="56" fill="#14161C"/>
+    <rect x="1.5" y="1.5" width="253" height="253" rx="54.5" fill="none" stroke="#262A34" stroke-width="3"/>
+    <rect x="52" y="64" width="10" height="128" rx="5" fill="#FFB020"/>
+    <path d="M84 76 L148 128 L84 180 Z" fill="#FFB020" stroke="#FFB020" stroke-width="14" stroke-linejoin="round"/>
+    <rect x="168" y="110" width="9" height="36" rx="4.5" fill="#3DD6C6"/>
+    <rect x="184" y="96" width="9" height="64" rx="4.5" fill="#3DD6C6"/>
+    <rect x="200" y="116" width="9" height="24" rx="4.5" fill="#3DD6C6"/>
+  </g>
+
+  <text x="330" y="205" font-family="system-ui, 'Segoe UI', Roboto, sans-serif" font-size="124" font-weight="800" fill="#E8EAF0" letter-spacing="-3">AnyCue</text>
+  <text x="334" y="258" font-family="system-ui, 'Segoe UI', Roboto, sans-serif" font-size="30" fill="#8B90A0">Open-source soundboard for Windows.</text>
+  <text x="334" y="302" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace" font-size="22" fill="#FFB020" letter-spacing="2">SPEAKERS  ·  MICROPHONE  ·  BOTH</text>
+
+  <path d="M0 360 C 90 320, 140 392, 230 352 S 380 326, 470 360 S 620 396, 710 350 S 860 322, 950 358 S 1100 394, 1190 350 S 1340 330, 1440 362" fill="none" stroke="#FFB020" stroke-opacity="0.35" stroke-width="3"/>
+  <path d="M0 372 C 110 345, 170 398, 260 366 S 420 340, 510 372 S 650 400, 740 366 S 900 340, 990 372 S 1150 398, 1240 366 S 1370 350, 1440 374" fill="none" stroke="#3DD6C6" stroke-opacity="0.3" stroke-width="3"/>
+</svg>
