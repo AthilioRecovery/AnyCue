@@ -1,0 +1,7 @@
+{
+  "format":"anycue-native-command-list",
+  "version":1,
+  "transport":"Tauri IPC (no network server)",
+  "methods":["list_devices","get_library","configure_audio","set_master_volume","get_peak","stop_all","play_sound","add_files","update_sound","delete_sound","add_category"],
+  "note":"This is command inventory, not a JSON-RPC API. See docs/ROADMAP.md."
+}

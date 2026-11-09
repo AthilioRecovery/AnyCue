@@ -1,0 +1,11 @@
+[package]
+name = "anycue-audio-io"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+anycue-core = { path = "../core" }
+cpal = "0.15"
+symphonia = { version = "0.5", features = ["all"] }
+crossbeam-queue = "0.3"
+serde = { version = "1", features = ["derive"] }

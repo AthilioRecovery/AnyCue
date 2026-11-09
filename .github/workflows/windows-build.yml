@@ -1,0 +1,41 @@
+name: Build AnyCue for Windows
+on:
+  push:
+    branches: [main, 'feature/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: './ -> target'
+      - name: Install JavaScript dependencies
+        working-directory: apps/desktop
+        run: npm install --no-audit --no-fund
+      - name: Check Rust crates
+        run: cargo test --workspace
+      - name: Build desktop app and Windows installer
+        working-directory: apps/desktop
+        run: npm run tauri build -- --bundles nsis
+      - name: Prepare portable EXE and installer
+        shell: pwsh
+        run: |
+          New-Item -Type Directory -Force upload | Out-Null
+          Copy-Item target/release/anycue-desktop.exe upload/AnyCue.exe
+          Get-ChildItem target/release/bundle/nsis/*.exe | ForEach-Object { Copy-Item $_.FullName upload/$($_.Name) }
+          Get-ChildItem upload | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $($_.Path | Split-Path -Leaf)" } | Set-Content upload/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnyCue-Windows-x64
+          path: upload/*
+          retention-days: 30
