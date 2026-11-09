@@ -16,13 +16,13 @@ Soundboard open-source para Windows 10/11, desenvolvido com Rust, Svelte 5 e Tau
 
 </div>
 
-> **Alpha v0.1.1:** é um **aplicativo Windows**, não um site. O executável é gerado no GitHub Actions. Recursos avançados ainda estão em desenvolvimento.
+> **Beta v0.1.0:** é um **aplicativo Windows**, não um site. O executável é compilado pelo GitHub Actions e publicado em Releases. Recursos avançados ainda estão em desenvolvimento.
 
 ## Baixar o aplicativo para Windows
 
-1. Abra [Build AnyCue for Windows](https://github.com/AthilioRecovery/AnyCue/actions/workflows/windows-build.yml).
-2. Escolha a execução **bem-sucedida** mais recente e baixe o artefato **AnyCue-Windows-x64**.
-3. Extraia e execute `AnyCue.exe` (portátil) ou o instalador `AnyCue_0.1.1_x64-setup.exe`.
+1. Acesse a [AnyCue v0.1.0 Beta](https://github.com/AthilioRecovery/AnyCue/releases/tag/v0.1.0).
+2. Baixe `AnyCue.exe` (portátil) ou `AnyCue_0.1.0_x64-setup.exe` (instalador).
+3. Opcionalmente confira o SHA-256 em `SHA256SUMS.txt` e execute.
 
 Para reproduzir sons como entrada de microfone no Discord ou em jogos, instale separadamente um cabo virtual, como VB-CABLE. O Windows 10 pode precisar do WebView2 Runtime.
 

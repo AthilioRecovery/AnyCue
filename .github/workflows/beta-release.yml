@@ -1,0 +1,65 @@
+name: Publish AnyCue Beta v0.1.0
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: contains(github.event.head_commit.message, '[publish-beta-v0.1.0]')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: './ -> target'
+      - name: Verify release version
+        shell: pwsh
+        run: |
+          $root = Get-Content package.json -Raw | ConvertFrom-Json
+          $frontend = Get-Content apps/desktop/package.json -Raw | ConvertFrom-Json
+          $tauri = Get-Content apps/desktop/src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          if ($root.version -ne '0.1.0' -or $frontend.version -ne '0.1.0' -or $tauri.version -ne '0.1.0') {
+            throw 'Package versions do not match v0.1.0'
+          }
+      - name: Install frontend dependencies
+        working-directory: apps/desktop
+        run: npm install --no-audit --no-fund
+      - name: Test Rust workspace
+        run: cargo test --workspace
+      - name: Build Windows portable app and NSIS installer
+        working-directory: apps/desktop
+        run: npm run tauri build -- --bundles nsis
+      - name: Prepare release files and checksums
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          $portable = 'target/release/anycue-desktop.exe'
+          if (-not (Test-Path $portable)) { throw "Portable executable not found: $portable" }
+          Copy-Item $portable release/AnyCue.exe
+          $installer = Get-ChildItem 'target/release/bundle/nsis' -Filter 'AnyCue_0.1.0_x64-setup.exe' | Select-Object -First 1
+          if (-not $installer) { throw 'Expected NSIS installer AnyCue_0.1.0_x64-setup.exe not found' }
+          Copy-Item $installer.FullName 'release/AnyCue_0.1.0_x64-setup.exe'
+          Get-ChildItem release -File | Get-FileHash -Algorithm SHA256 | ForEach-Object {
+            "$($_.Hash.ToLowerInvariant())  $(Split-Path $_.Path -Leaf)"
+          } | Set-Content -Encoding utf8 release/SHA256SUMS.txt
+      - name: Save build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnyCue-v0.1.0-Windows-x64
+          path: release/*
+      - name: Publish GitHub prerelease
+        shell: pwsh
+        env:
+          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create v0.1.0 release/AnyCue.exe release/AnyCue_0.1.0_x64-setup.exe release/SHA256SUMS.txt --target "$env:GITHUB_SHA" --title 'AnyCue v0.1.0 Beta' --notes-file .github/release-notes/v0.1.0.md --prerelease

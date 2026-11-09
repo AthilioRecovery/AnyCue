@@ -16,13 +16,13 @@ Open-source soundboard for Windows 10/11. Built with Rust, Svelte 5 and Tauri 2.
 
 </div>
 
-> **Alpha v0.1.1:** A genuine Windows desktop application, not a browser website. Compiled Windows binaries are produced in GitHub Actions. Advanced features listed in the roadmap are **not shipped yet**.
+> **Beta v0.1.0:** A genuine Windows desktop application, not a browser website. Windows binaries are compiled by GitHub Actions and published on the Releases page. Advanced features listed in the roadmap are **not shipped yet**.
 
 ## Download for Windows
 
-1. Open [Build AnyCue for Windows](https://github.com/AthilioRecovery/AnyCue/actions/workflows/windows-build.yml).
-2. Open the latest **successful** run and download **AnyCue-Windows-x64** under Artifacts.
-3. Unzip and run `AnyCue.exe` (portable) or the `AnyCue_0.1.1_x64-setup.exe` installer.
+1. Open [AnyCue v0.1.0 Beta](https://github.com/AthilioRecovery/AnyCue/releases/tag/v0.1.0).
+2. Download `AnyCue.exe` (portable) or `AnyCue_0.1.0_x64-setup.exe` (installer).
+3. Optionally compare its SHA-256 to `SHA256SUMS.txt`, then run it.
 
 A virtual audio cable such as VB-CABLE (installed separately) is necessary to route audio into Discord or games. Windows 10 may require the Microsoft WebView2 Runtime. See [WINDOWS.md](WINDOWS.md).
 

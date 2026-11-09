@@ -4,13 +4,13 @@
 
 ## Download do EXE
 
-Abra **Actions > Build AnyCue for Windows** no repositório do GitHub, abra a execução mais recente bem-sucedida e baixe o artefato `AnyCue-Windows-x64`. Ele contém:
+Abra a [release v0.1.0 Beta](https://github.com/AthilioRecovery/AnyCue/releases/tag/v0.1.0) e baixe:
 
-- `AnyCue.exe`: executável independente (requer WebView2, normalmente disponível no Windows 11).
-- `AnyCue_..._x64-setup.exe`: instalador do Windows, quando gerado pelo Tauri/NSIS.
-- `SHA256SUMS.txt`: checksums.
+- `AnyCue.exe`: portátil (requer WebView2, normalmente disponível no Windows 11).
+- `AnyCue_0.1.0_x64-setup.exe`: instalador Windows NSIS.
+- `SHA256SUMS.txt`: checksums SHA-256 para verificar os arquivos.
 
-> Atenção: o build automático só produz o EXE se a execução do GitHub Actions finalizar com sucesso. Não há binário Windows pré-compilado dentro deste pacote de código-fonte.
+A compilação acontece pelo workflow Windows do GitHub Actions. Caso a release não esteja disponível, consulte a aba **Actions** para identificar falhas de build.
 
 ## Compilar localmente
 
