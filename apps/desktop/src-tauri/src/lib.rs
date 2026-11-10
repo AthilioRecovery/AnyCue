@@ -126,7 +126,7 @@ fn worker(receiver: Receiver<AudioRequest>) {
                 reply,
             } => {
                 let result = engine
-                    .as_ref()
+                    .as_mut()
                     .ok_or_else(|| "Configure audio devices first".to_string())
                     .and_then(|audio| audio.play_file(&path, route, volume));
                 let _ = reply.send(result);
@@ -170,7 +170,7 @@ fn store_settings(state: &AppState, settings: &Settings) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn list_devices() -> Result<Vec<DeviceInfo>, String> {
+async fn list_devices() -> Result<Vec<DeviceInfo>, String> {
     anycue_audio_io::devices()
 }
 #[tauri::command]
@@ -186,7 +186,7 @@ fn get_startup_warning(state: State<'_, AppState>) -> Result<Option<String>, Str
     Ok(lock(&state.startup_warning)?.take())
 }
 #[tauri::command]
-fn configure_audio(
+async fn configure_audio(
     state: State<'_, AppState>,
     microphone: Option<String>,
     monitor: Option<String>,
@@ -205,7 +205,7 @@ fn configure_audio(
     store_settings(&state, &settings)
 }
 #[tauri::command]
-fn set_master_volume(state: State<'_, AppState>, volume: f32) -> Result<(), String> {
+async fn set_master_volume(state: State<'_, AppState>, volume: f32) -> Result<(), String> {
     ask(&state, |reply| AudioRequest::Volume {
         value: volume,
         reply,
@@ -215,15 +215,15 @@ fn set_master_volume(state: State<'_, AppState>, volume: f32) -> Result<(), Stri
     store_settings(&state, &settings)
 }
 #[tauri::command]
-fn get_peak(state: State<'_, AppState>) -> Result<f32, String> {
+async fn get_peak(state: State<'_, AppState>) -> Result<f32, String> {
     ask(&state, |reply| AudioRequest::Peak { reply })
 }
 #[tauri::command]
-fn stop_all(state: State<'_, AppState>) -> Result<(), String> {
+async fn stop_all(state: State<'_, AppState>) -> Result<(), String> {
     ask(&state, |reply| AudioRequest::Stop { reply })
 }
 #[tauri::command]
-fn play_sound(state: State<'_, AppState>, id: String) -> Result<f64, String> {
+async fn play_sound(state: State<'_, AppState>, id: String) -> Result<f64, String> {
     let sound = lock(&state.library)?
         .sounds
         .iter()
@@ -243,7 +243,7 @@ fn play_sound(state: State<'_, AppState>, id: String) -> Result<f64, String> {
     })
 }
 #[tauri::command]
-fn add_files(
+async fn add_files(
     state: State<'_, AppState>,
     paths: Vec<String>,
     category: String,
@@ -289,7 +289,7 @@ fn add_files(
     Ok(library.clone())
 }
 #[tauri::command]
-fn update_sound(state: State<'_, AppState>, sound: Sound) -> Result<(), String> {
+async fn update_sound(state: State<'_, AppState>, sound: Sound) -> Result<(), String> {
     let mut library = lock(&state.library)?;
     let existing = library
         .sounds
@@ -305,13 +305,13 @@ fn update_sound(state: State<'_, AppState>, sound: Sound) -> Result<(), String> 
     store(&state, &library)
 }
 #[tauri::command]
-fn delete_sound(state: State<'_, AppState>, id: String) -> Result<(), String> {
+async fn delete_sound(state: State<'_, AppState>, id: String) -> Result<(), String> {
     let mut library = lock(&state.library)?;
     library.sounds.retain(|entry| entry.id != id);
     store(&state, &library)
 }
 #[tauri::command]
-fn add_category(state: State<'_, AppState>, name: String) -> Result<(), String> {
+async fn add_category(state: State<'_, AppState>, name: String) -> Result<(), String> {
     let name: String = name.trim().chars().take(25).collect();
     if name.is_empty() {
         return Err("Category name is empty".into());

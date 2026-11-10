@@ -9,3 +9,6 @@ cpal = "0.15"
 symphonia = { version = "0.5", features = ["all"] }
 crossbeam-queue = "0.3"
 serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+hound = "3"

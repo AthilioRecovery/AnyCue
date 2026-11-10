@@ -62,7 +62,7 @@ fn run() -> Result<(), String> {
                     .find(|d| d.direction == "output" && d.is_default)
                     .map(|d| d.name);
             }
-            let engine =
+            let mut engine =
                 AudioEngine::new(mic.as_deref(), monitor.as_deref(), virtual_name.as_deref())?;
             let route = match (monitor.is_some(), virtual_name.is_some()) {
                 (true, true) => Route::Both,

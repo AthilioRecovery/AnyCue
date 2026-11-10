@@ -4,7 +4,7 @@ mod decode;
 use anycue_core::{gain_from_percent, mix_stereo};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_queue::ArrayQueue;
-pub use decode::{decode_file, Clip};
+pub use decode::{decode_file, Clip, DecodedClipCache, DEFAULT_CLIP_CACHE_BYTES};
 use std::{
     path::Path,
     sync::{
@@ -143,6 +143,7 @@ pub struct AudioEngine {
     monitor: Option<OutputHandle>,
     virtual_output: Option<OutputHandle>,
     _input: Option<cpal::Stream>,
+    clips: DecodedClipCache,
 }
 impl VirtualMicBackend for AudioEngine {
     fn backend_description(&self) -> &'static str {
@@ -188,10 +189,11 @@ impl AudioEngine {
             monitor,
             virtual_output,
             _input: microphone,
+            clips: DecodedClipCache::new(DEFAULT_CLIP_CACHE_BYTES),
         })
     }
-    pub fn play_file(&self, path: &Path, route: Route, volume: f32) -> Result<f64, String> {
-        let clip = decode_file(path)?;
+    pub fn play_file(&mut self, path: &Path, route: Route, volume: f32) -> Result<f64, String> {
+        let clip = self.clips.get_or_decode(path)?;
         let duration = clip.duration();
         let v = gain_from_percent(volume);
         if matches!(route, Route::Both | Route::Monitor) {
