@@ -8,6 +8,7 @@
   type Sound = { id: string; title: string; path: string; category: string; color: string; favorite: boolean; volume: number; destination: Destination };
   type Library = { version: number; categories: string[]; sounds: Sound[] };
   type Device = { name: string; direction: 'input' | 'output'; isDefault: boolean };
+  type Settings = { microphone: string | null; monitor: string | null; virtualOutput: string | null; masterVolume: number };
   type Tab = 'sounds' | 'routing' | 'settings';
 
   let tab: Tab = 'sounds';
@@ -64,7 +65,7 @@
   }
   async function importSounds() {
     try {
-      const files = await open({ multiple: true, filters: [{ name: 'Áudio', extensions: ['mp3', 'wav', 'ogg', 'flac', 'opus', 'aac', 'm4a'] }] });
+      const files = await open({ multiple: true, filters: [{ name: 'Audio', extensions: ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a'] }] });
       const paths = Array.isArray(files) ? files : files ? [files] : [];
       if (!paths.length) return;
       await invoke('add_files', { paths, category: category === 'all' ? 'Geral' : category });
@@ -131,7 +132,17 @@
   onMount(() => {
     mounted = true;
     const init = async () => {
-      try { await reload(); await refreshDevices(); if (monitor) await applyRouting(); }
+      try {
+        await reload();
+        const settings = await invoke<Settings>('get_settings');
+        microphone = settings.microphone || '';
+        monitor = settings.monitor || '';
+        virtualOutput = settings.virtualOutput || '';
+        volume = settings.masterVolume;
+        await refreshDevices();
+        const warning = await invoke<string | null>('get_startup_warning');
+        if (warning) notice = warning;
+      }
       catch (e) { report(e); }
       finally { loading = false; }
     };
